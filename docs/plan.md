@@ -952,9 +952,9 @@ Resultado del hito: los 7 puntos del MVP funcionando, con Android instalado por 
 #### F23 — Geovallas nativas en el móvil
 
 - **Objetivo:** el móvil registra en el sistema operativo los lugares de todos sus grupos y envía los eventos dentro de los lotes.
-- **Alcance:** sincronización con `GET /v1/me/geofences` al arrancar, al volver a primer plano y cuando `placesVersion` cambie en la respuesta de un lote (evento `onHttp` de Transistor). Reemplazo completo de las geovallas (`removeGeofences` + `addGeofences`), con identificadores `place:{id}` y `notifyOnEntry/Exit`.
+- **Alcance:** sincronización con `GET /v1/me/geofences` al arrancar, al volver a primer plano y cuando `placesVersion` cambie en la respuesta de un lote (evento `onHttp` de Transistor). Reemplazo completo de las geovallas (`removeGeofences` + `addGeofences`), con identificadores `place:{id}` y `notifyOnEntry/Exit`. **Envío inmediato al detectar un evento de lugar:** en el manejador `onGeofence` (y en la *headless task* de Android) se llama a `sync()` sin esperar a completar el lote.
 - **Tests (TDD):** cálculo del conjunto de geovallas a añadir y quitar; detección de cambio de versión.
-- **Criterios de aceptación:** 👤 al llegar a casa, `location_history` contiene un registro con `geofence.action = ENTER` y `identifier` correcto.
+- **Criterios de aceptación:** 👤 al llegar a casa, `location_history` contiene un registro con `geofence.action = ENTER` y `identifier` correcto; 👤 ese registro llega al servidor en ≤ 3 min aunque el lote no esté completo.
 - **Riesgos:** límite de 20 regiones en iOS. Transistor lo gestiona con "infinite geofencing" (activa las más cercanas). Con 10 miembros y pocos lugares no se alcanza en el MVP.
 - **Dependencias:** F22, F15.
 
