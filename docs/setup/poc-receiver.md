@@ -39,7 +39,7 @@ Es la `POC_KEY`. La usarán los móviles en la cabecera `X-PoC-Key`. Guárdala e
 
 ## 5. Proyecto en Vercel
 
-1. https://vercel.com/new → importa el repo `aitorevi/free-360`.
+1. https://vercel.com/new → importa el repo `aitorevi/neardear`.
 2. Configura:
    - **Project Name:** `neardear-poc-receiver`
    - **Root Directory:** `apps/poc-receiver`
