@@ -390,7 +390,7 @@ Cuando el volumen lo pida, el borrado pasa a ser un `DROP` de la partición diar
 **Convenciones**
 
 - Base: `https://api.<dominio>/v1`. Solo HTTPS.
-- Autenticación: `Authorization: Bearer <JWT de Supabase>` en todo salvo `/v1/health`.
+- Autenticación: `Authorization: Bearer <JWT de Supabase>` en todo salvo `/v1/health` y `/v1/auth/refresh`.
 - Cabecera `X-App-Version` en todas las peticiones. Si es inferior a `minAppVersion`, la respuesta es `426`.
 - Todos los cuerpos se validan con los esquemas Zod de `packages/contracts`, que comparten app y API.
 - Fechas en ISO 8601 UTC. Coordenadas en WGS84.
@@ -423,6 +423,7 @@ Cuando el volumen lo pida, el borrado pasa a ser un `DROP` de la partición diar
 | Método y ruta | Descripción |
 |---|---|
 | `GET /v1/health` | Comprobación de vida (sin auth). |
+| `POST /v1/auth/refresh` | `{ "refreshToken": "…" }` → nuevo token y token de renovación. Sin JWT (lo usa Transistor cuando el token ha caducado). Hoy delega en Supabase Auth. |
 | `GET /v1/config` | Configuración remota. |
 | `GET /v1/me` | Perfil, estado de pausa y consentimiento. |
 | `PATCH /v1/me` | Cambiar `displayName` o aceptar el consentimiento (`consentVersion`). |
@@ -874,7 +875,7 @@ Resultado del hito: los 7 puntos del MVP funcionando, con Android instalado por 
 #### F15 — Rastreo real en la app
 
 - **Objetivo:** la app rastrea en segundo plano y envía lotes a `POST /v1/locations` con el token del usuario.
-- **Alcance:** puerto `LocationTracker` en la app y adaptador Transistor; configuración desde `GET /v1/config`; `authorization` JWT con `refreshUrl` y sincronización de tokens con `supabase-js` (patrón validado en F0.3); arranque solo con consentimiento y permiso; parada al cerrar sesión; indicador de "compartiendo" en la UI.
+- **Alcance:** puerto `LocationTracker` en la app y adaptador Transistor; configuración desde `GET /v1/config`; `authorization` JWT con `refreshUrl` apuntando a `POST /v1/auth/refresh` y sincronización de tokens con `supabase-js` en los dos sentidos (patrón validado en F0.3); endpoint `POST /v1/auth/refresh` en la API (caso de uso `RefreshSession` con el puerto `AuthProvider`, adaptador Supabase Auth); arranque solo con consentimiento y permiso; parada al cerrar sesión; indicador de "compartiendo" en la UI.
 - **Tareas:** 1) puerto y adaptador; 2) mapper config → Transistor; 3) sincronización de tokens en los dos sentidos; 4) ciclo de vida (login, logout, permisos revocados).
 - **Tests (TDD):** mapper de configuración; máquina de estados del rastreo (sin permiso → no arranca; logout → para y limpia la cola local); sincronización de tokens con un doble del tracker.
 - **Criterios de aceptación:** 👤 un día de uso normal en los tres dispositivos con posiciones en `last_positions` y `location_history`; 👤 ningún 401 en los logs de la API tras más de 2 h en segundo plano.
@@ -1128,7 +1129,7 @@ Con menos detalle y en orden de prioridad aproximado.
 | # | Decisión | Opciones | Recomendación |
 |---|---|---|---|
 | D1 | Acceso de la API a Postgres | (a) `postgres` (porsager) con SQL explícito; (b) Kysely; (c) Drizzle | **(a)** o **(b)**: SQL de PostGIS legible y sin "magia" en los adaptadores. Me inclino por **Kysely** por el tipado sin ocultar el SQL. |
-| D2 | Endpoint de renovación del token para Transistor | (a) directo a Supabase Auth; (b) proxy `POST /v1/auth/refresh` en la API | **(b)**: cambiar de proveedor de auth sin publicar la app. Cuesta un endpoint pequeño. |
+| D2 | Endpoint de renovación del token para Transistor | (a) directo a Supabase Auth; (b) proxy `POST /v1/auth/refresh` en la API | ✅ **Decidido: (b)**. Permite cambiar de proveedor de auth sin publicar la app. Cuesta un endpoint pequeño. |
 | D3 | Creación del perfil | (a) trigger en `auth.users`; (b) al primer `GET /v1/me` | **(b)**: lógica en el dominio, testeable y sin triggers en el esquema de Auth. |
 | D4 | El último admin sale y quedan miembros | (a) pasar el rol al miembro más antiguo; (b) impedirlo hasta que nombre a otro | **(a)**: evita grupos huérfanos y es lo que espera el usuario. |
 | D5 | Qué ven los demás de alguien sin datos recientes | (a) la última posición con "hace X"; (b) ocultarla pasado un tiempo | **(a)** en el MVP, con un aviso visual si tiene más de 1 h. |
