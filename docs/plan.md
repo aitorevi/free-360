@@ -178,7 +178,8 @@ neardear/
 │  │     ├─ unit/                # Dominio y casos de uso (adaptadores en memoria)
 │  │     ├─ integration/         # Adaptadores contra Supabase local
 │  │     └─ http/                # Rutas con app.request() de Hono
-│  └─ poc/                       # Solo Hito 0: app y receptor PoC (se archiva al terminar)
+│  ├─ poc-receiver/              # Solo Hito 0: receptor PoC (se elimina al terminar)
+│  └─ poc-mobile/                # Solo Hito 0: app PoC (se elimina al terminar)
 ├─ packages/
 │  ├─ contracts/                 # Esquemas Zod y tipos de la API v1 y del canal Realtime
 │  ├─ test-fixtures/             # Datos ficticios (coordenadas y emails inventados)
@@ -620,7 +621,7 @@ Objetivo del hito: **validar que la ubicación en segundo plano con Expo + Trans
 ### F0.2 — Receptor PoC
 
 - **Objetivo:** un endpoint desechable que guarde tal cual los lotes que envía Transistor, para medir.
-- **Alcance:** proyecto Supabase (Frankfurt, plan gratuito), tabla `poc_batches (id, device_label, received_at, payload jsonb)` con RLS deny-all, y una función en Vercel (`apps/poc/receiver`) protegida con un secreto compartido. **No entra:** auth real ni dominio.
+- **Alcance:** proyecto Supabase (Frankfurt, plan gratuito), tabla `poc_batches (id, device_label, received_at, payload jsonb)` con RLS deny-all, y una función en Vercel (`apps/poc-receiver`) protegida con un secreto compartido. **No entra:** auth real ni dominio.
 - **Tareas:**
   1. Crear el proyecto Supabase y guardar las credenciales en Vercel (nunca en el repo).
   2. Migración de `poc_batches`.
@@ -636,7 +637,7 @@ Objetivo del hito: **validar que la ubicación en segundo plano con Expo + Trans
 - **Objetivo:** una app mínima con development build que rastrea en segundo plano y envía lotes al receptor.
 - **Alcance:** Expo (nueva arquitectura), `react-native-background-geolocation` y su plugin de Expo, permisos "Siempre", una pantalla de estado (estado, últimos eventos, botón para registrar una geovalla de prueba en tu casa) y una etiqueta de dispositivo. **No entra:** login, mapa ni diseño.
 - **Tareas:**
-  1. `apps/poc/mobile` con Expo y development build.
+  1. `apps/poc-mobile` con Expo y development build.
   2. Instalar y configurar Transistor: `stopOnTerminate: false`, `startOnBoot: true`, `batchSync: true`, `autoSyncThreshold: 5`, `distanceFilter: 50`, `url` del receptor, `headers` con la clave PoC, logs de la librería en nivel verbose.
   3. Flujo de permisos: primero "Al usarse", luego "Siempre". En Android, pantalla de explicación previa y acceso a la optimización de batería.
   4. Pantalla de estado y botón "exportar log" (envía el log de Transistor al receptor).
@@ -650,7 +651,7 @@ Objetivo del hito: **validar que la ubicación en segundo plano con Expo + Trans
 ### F0.4 — Script de análisis
 
 - **Objetivo:** convertir los lotes en métricas objetivas.
-- **Alcance:** un script (`apps/poc/analysis`) que lee `poc_batches` y genera un informe en Markdown por dispositivo y día.
+- **Alcance:** un script (`apps/poc-receiver/analysis`) que lee `poc_batches` y genera un informe en Markdown por dispositivo y día.
 - **Métricas:**
   - Número de posiciones por hora, separando "en movimiento" y "parado".
   - **Latencia de entrega**: `received_at − timestamp`, en p50 y p90.
@@ -711,7 +712,7 @@ Objetivo del hito: **validar que la ubicación en segundo plano con Expo + Trans
 - **Criterios de aceptación:** 👤 informe aprobado por ti con decisión explícita (seguir, ajustar o parar).
 - **Dependencias:** F0.5.
 
-Al cerrar el hito: se borran el proyecto PoC de Vercel y la tabla `poc_batches`, y `apps/poc` se archiva (se elimina del árbol; queda en el historial de git).
+Al cerrar el hito: se borran el proyecto PoC de Vercel y la tabla `poc_batches`, y `apps/poc-*` se archivan (se elimina del árbol; queda en el historial de git).
 
 ---
 

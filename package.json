@@ -14,7 +14,8 @@
     "check:secrets": "node scripts/check-forbidden-secrets.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "test:integration": "turbo run test:integration"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

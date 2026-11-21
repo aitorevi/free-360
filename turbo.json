@@ -11,6 +11,10 @@
     },
     "test": {
       "outputs": []
+    },
+    "test:integration": {
+      "cache": false,
+      "passThroughEnv": ["PGHOST", "PGPORT", "PGUSER", "PGPASSWORD", "PGDATABASE"]
     }
   }
 }
