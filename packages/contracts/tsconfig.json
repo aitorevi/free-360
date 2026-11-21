@@ -1,0 +1,9 @@
+{
+  "extends": "@neardear/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": []
+  },
+  "include": ["src"]
+}

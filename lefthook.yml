@@ -1,0 +1,12 @@
+# Hooks de git. Se instalan solos con `pnpm install` (script "prepare").
+pre-commit:
+  commands:
+    gitleaks:
+      run: |
+        if ! command -v gitleaks >/dev/null 2>&1; then
+          echo "gitleaks no está instalado. Instálalo (macOS: brew install gitleaks) antes de hacer commit."
+          exit 1
+        fi
+        gitleaks git --pre-commit --staged --redact --no-banner .
+    forbidden-secrets:
+      run: node scripts/check-forbidden-secrets.ts

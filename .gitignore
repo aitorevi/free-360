@@ -1,0 +1,29 @@
+# Dependencias y builds
+node_modules/
+dist/
+coverage/
+.turbo/
+*.tsbuildinfo
+
+# Secretos: NUNCA se suben al repo
+.env
+.env.*
+!.env.example
+*.pem
+*.p8
+*.p12
+*.keystore
+*.jks
+google-services.json
+GoogleService-Info.plist
+credentials.json
+.claude/settings.local.json
+
+# Expo / nativo
+.expo/
+ios/
+android/
+
+# Sistema
+.DS_Store
+*.log
