@@ -1137,6 +1137,7 @@ Con menos detalle y en orden de prioridad aproximado.
 | D8 | Identificador de la app (`bundleIdentifier` / `applicationId`) | Por ejemplo `es.<tudominio>.one360` | **Decidirlo en F5**: es definitivo y va ligado a la licencia de Transistor. |
 | D9 | Licencia del código del repo público | MIT, AGPL, sin licencia ("todos los derechos reservados") | **Sin licencia** si quieres reservarte el uso comercial; **AGPL** si quieres que sea abierto pero que nadie lo explote cerrado. |
 | D10 | Cuenta de demo para los revisores | (a) código OTP fijo para un email concreto activado por configuración; (b) login con contraseña solo para la cuenta de demo | **(a)**: no añade otro método de login. El código fijo vive en un secreto, nunca en el repo. |
+| D12 | Alojamiento de la API al publicar | (a) Vercel Pro (20 $/mes); (b) Cloudflare Workers (gratis, uso comercial permitido, Postgres con Hyperdrive); (c) Supabase Edge Functions | Exploración en **Vercel Hobby**. Decidir en el hito de publicación según el número de usuarios. Para que el cambio sea barato, nada específico de Vercel sale de `apps/api/src/main/` (el trabajo en segundo plano tras la respuesta va detrás de un puerto `BackgroundTasks`). |
 | D11 | Dónde corre la PoC | (a) `apps/poc` dentro del monorepo; (b) repo aparte | **(a)**: aprovecha la CI y los guardarraíles. Se elimina al cerrar el hito. |
 
 ---
@@ -1159,17 +1160,21 @@ Con menos detalle y en orden de prioridad aproximado.
 | GitHub Actions | Repo público | 0 |
 | **Total** | | **0 $/mes** |
 
-### Hito 2 — Publicación del MVP (decenas de usuarios)
+### Hito 2 — Publicación del MVP (decenas o pocos cientos de usuarios)
+
+Se mantienen los planes gratuitos hasta que los números pidan otra cosa.
 
 | Concepto | Coste |
 |---|---|
 | Apple Developer Program | 99 $/año (≈ 8 $/mes) |
 | Google Play Console | 25 $ una vez |
-| Licencia Transistor (Android) | Pago único por app, del orden de cientos de dólares, con un año de actualizaciones (**confirmar el precio actual** en su web) |
-| Supabase Pro (sin pausas, copias de seguridad diarias) | 25 $/mes |
-| Vercel Pro (uso comercial) | 20 $/mes |
+| Licencia Transistor (Android) | Pago único por app, del orden de cientos de dólares, con un año de actualizaciones (**confirmar el precio actual** en su web). Opción: lanzar primero solo en iOS y aplazarla. |
+| Supabase | Free: 500 MB dan para ≈ 300–400 usuarios con 30 días de historial. Con ingesta diaria no se pausa. |
+| API | Vercel Hobby mientras sea uso personal; al publicar, ver D12 (Cloudflare Workers gratis o Vercel Pro a 20 $/mes). |
 | Resto (Resend, Sentry, Expo, FCM, OpenFreeMap) | 0 $ en planes gratuitos |
-| **Total recurrente** | **≈ 55 $/mes** + pagos únicos |
+| **Total recurrente** | **≈ 8 $/mes** + pagos únicos |
+
+**Cuándo pasar a pago:** Supabase Pro (25 $/mes) al superar ≈ 300 usuarios o si se necesitan copias de seguridad automáticas.
 
 ### Con 10.000 usuarios
 
