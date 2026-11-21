@@ -1,7 +1,7 @@
 # NearDear — Plan hasta el MVP y hoja de ruta
 
 > Estado: **borrador para revisión**. No se implementa nada hasta que se apruebe explícitamente.
-> Repositorio: `free-360` (público). Nombre del producto: **NearDear** (de *"nearest and dearest"*; pendiente de verificar en TMview, tiendas y dominios).
+> Repositorio: `neardear` (público; antes `free-360`). Nombre del producto: **NearDear** (de *"nearest and dearest"*; pendiente de verificar en TMview, tiendas y dominios).
 
 ## Índice
 
@@ -154,7 +154,7 @@ Entrada: `userId` autenticado y un lote validado.
 ## 4. Estructura del monorepo
 
 ```
-free-360/
+neardear/
 ├─ apps/
 │  ├─ mobile/                    # App Expo (NearDear)
 │  │  ├─ app/                    # Rutas expo-router
@@ -1137,7 +1137,7 @@ Con menos detalle y en orden de prioridad aproximado.
 | D7 | Alojamiento de los textos legales | (a) GitHub Pages; (b) web en Astro en Vercel | **(b)** cuando haya dominio: te sirve también como web del producto, y conoces Astro. **(a)** mientras tanto. |
 | D8 | Identificador de la app (`bundleIdentifier` / `applicationId`) | Por ejemplo `app.neardear` (si se consigue el dominio) o `es.<tudominio>.neardear` | **Decidirlo en F5**, cuando esté verificado el nombre: es definitivo y va ligado a la licencia de Transistor. |
 | D9 | Licencia del código del repo público | MIT, AGPL, sin licencia ("todos los derechos reservados") | **Sin licencia** si quieres reservarte el uso comercial; **AGPL** si quieres que sea abierto pero que nadie lo explote cerrado. |
-| D10 | Cuenta de demo para los revisores | (a) código OTP fijo para un email concreto activado por configuración; (b) login con contraseña solo para la cuenta de demo | **(a)**: no añade otro método de login. El código fijo vive en un secreto, nunca en el repo. |
+| D10 | Cuenta de demo para los revisores | (a) código OTP fijo para un email concreto activado por configuración; (b) login con contraseña solo para la cuenta de demo | ✅ **Decidido: (a)**: no añade otro método de login. El código fijo vive en un secreto, nunca en el repo. |
 | D12 | Alojamiento de la API al publicar | (a) Vercel Pro (20 $/mes); (b) Cloudflare Workers (gratis, uso comercial permitido, Postgres con Hyperdrive); (c) Supabase Edge Functions | Exploración en **Vercel Hobby**. Decidir en el hito de publicación según el número de usuarios. Para que el cambio sea barato, nada específico de Vercel sale de `apps/api/src/main/` (el trabajo en segundo plano tras la respuesta va detrás de un puerto `BackgroundTasks`). **Tiempo real:** si se elige Cloudflare, **Durable Objects** con WebSockets (un objeto por grupo, con hibernación) sustituiría a Supabase Realtime y eliminaría la excepción al principio nº 1. Solo cambiarían el adaptador `GroupNotifier` de la API y el adaptador de tiempo real de la app. |
 | D11 | Dónde corre la PoC | (a) `apps/poc` dentro del monorepo; (b) repo aparte | **(a)**: aprovecha la CI y los guardarraíles. Se elimina al cerrar el hito. |
 
