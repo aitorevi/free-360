@@ -1,7 +1,7 @@
-# One360 — Plan hasta el MVP y hoja de ruta
+# NearDear — Plan hasta el MVP y hoja de ruta
 
 > Estado: **borrador para revisión**. No se implementa nada hasta que se apruebe explícitamente.
-> Repositorio: `free-360` (público). Nombre del producto: **One360**.
+> Repositorio: `free-360` (público). Nombre del producto: **NearDear** (de *"nearest and dearest"*; pendiente de verificar en TMview, tiendas y dominios).
 
 ## Índice
 
@@ -57,7 +57,7 @@ Cosas del planteamiento original que matizo, con su justificación:
 6. **Pooler de conexiones desde el MVP.** Las funciones serverless abren muchas conexiones. La API usa Supavisor en modo transacción desde el primer día, no a partir de 5.000 usuarios.
 7. **Ningún cliente lee tablas directamente.** El principio dice "tablas de localización", pero lo extiendo a **todas**: la app solo habla con la API. RLS activado en todas las tablas y sin políticas para `anon`/`authenticated`, de modo que se deniega todo por defecto. La única política es la de autorización de canales Realtime. Así el contrato es uno solo y la defensa en profundidad es total.
 8. **Lotes en pausa: se aceptan y se descartan.** Transistor reintenta mientras no reciba un 2xx. Si la API respondiera con error a los lotes que llegan después de pausar, el móvil los reintentaría sin fin. Responde `200` con `discarded`.
-9. **El nombre.** "One360" comparte "360" con Life360, marca registrada del mismo sector. Antes de publicar hay que buscarlo en TMview (EUIPO). Es una tarea de la fase P1.
+9. **El nombre.** Se descartó "NearDear" por su parecido con Life360, marca registrada del mismo sector. El nombre elegido es **NearDear**. Antes de publicar hay que verificar en TMview (EUIPO), en las tiendas y en los registros de dominios que está libre. Es una tarea de la fase P1, aunque conviene hacerla cuanto antes.
 10. **El revisor de Apple no puede recibir tu código OTP.** Para la revisión hace falta una cuenta de demo con un código fijo, activable solo para un email concreto. Está en la fase P5.
 
 ---
@@ -66,7 +66,7 @@ Cosas del planteamiento original que matizo, con su justificación:
 
 ```mermaid
 flowchart LR
-  subgraph Movil["App One360 (Expo, nueva arquitectura)"]
+  subgraph Movil["App NearDear (Expo, nueva arquitectura)"]
     UI["Pantallas<br/>(expo-router)"]
     API_C["Cliente API v1<br/>(tipos y Zod de contracts)"]
     RT_C["Adaptador Realtime<br/>(canal v1:group:id)"]
@@ -78,7 +78,7 @@ flowchart LR
     TRK --> TBG
   end
 
-  subgraph Vercel["API One360 (Hono en Vercel, fra1)"]
+  subgraph Vercel["API NearDear (Hono en Vercel, fra1)"]
     HTTP["Capa HTTP v1<br/>auth JWT, Zod, errores"]
     UC["Casos de uso<br/>IngestLocations, HandleGeofenceTransition,<br/>GetGroupPositions, CreateGroup, ..."]
     DOM["Dominio + puertos"]
@@ -156,7 +156,7 @@ Entrada: `userId` autenticado y un lote validado.
 ```
 free-360/
 ├─ apps/
-│  ├─ mobile/                    # App Expo (One360)
+│  ├─ mobile/                    # App Expo (NearDear)
 │  │  ├─ app/                    # Rutas expo-router
 │  │  ├─ src/
 │  │  │  ├─ features/            # auth, onboarding, groups, map, places, sharing, account
@@ -209,7 +209,7 @@ Las dependencias solo van en un sentido: `domain` no importa nada de fuera; `app
 
 ## 5. Modelo de datos inicial
 
-Todo en el esquema `public` con RLS activado y **sin políticas para `anon`/`authenticated`**. La API accede con un rol propio, `one360_api`, a través del pooler.
+Todo en el esquema `public` con RLS activado y **sin políticas para `anon`/`authenticated`**. La API accede con un rol propio, `neardear_api`, a través del pooler.
 
 ```sql
 -- Extensiones
@@ -744,7 +744,7 @@ Resultado del hito: los 7 puntos del MVP funcionando, con Android instalado por 
 #### F3 — Esquema de base de datos y RLS
 
 - **Objetivo:** migraciones del [§5](#5-modelo-de-datos-inicial) con RLS deny-all comprobado en la CI.
-- **Alcance:** migraciones, rol `one360_api`, `scripts/check-rls.ts`, Supabase local en la CI, `seed.sql` ficticio. **No entra:** pg_cron (F16) ni la política Realtime (F19).
+- **Alcance:** migraciones, rol `neardear_api`, `scripts/check-rls.ts`, Supabase local en la CI, `seed.sql` ficticio. **No entra:** pg_cron (F16) ni la política Realtime (F19).
 - **Tareas:** 1) migraciones; 2) rol de API con privilegios mínimos; 3) script de RLS; 4) job de CI con `supabase start`; 5) seed.
 - **Tests:** integración: con la clave `anon` y con un JWT `authenticated`, cada tabla devuelve 0 filas o error al leer, insertar, actualizar y borrar. `check-rls.ts` falla con una tabla sin RLS (test con una migración temporal).
 - **Criterios de aceptación:** 🤖 job de integración en verde; 🤖 `check-rls` en la CI.
@@ -765,7 +765,7 @@ Resultado del hito: los 7 puntos del MVP funcionando, con Android instalado por 
 
 #### F5 — Esqueleto de la app
 
-- **Objetivo:** la app real de One360 con navegación, cliente API tipado y observabilidad.
+- **Objetivo:** la app real de NearDear con navegación, cliente API tipado y observabilidad.
 - **Alcance:** `apps/mobile` con expo-router, cliente API generado sobre `contracts` (fetch + Zod), i18n en español, Sentry con filtro de datos personales, pantalla de "estado de la API". **No entra:** login.
 - **Tareas:** 1) crear la app y el development build; 2) cliente API con errores tipados; 3) i18n; 4) Sentry; 5) CI de la app (typecheck + Jest).
 - **Tests (TDD):** cliente API: parseo de respuestas OK, errores del contrato → error tipado, respuesta que no cumple el esquema → error controlado, 426 → evento "actualización necesaria".
@@ -1019,7 +1019,7 @@ Resultado del hito: los 7 puntos del MVP funcionando, con Android instalado por 
 
 #### F30 — Prueba familiar (calendario: 1–2 semanas)
 
-- **Objetivo:** usar One360 de verdad y recoger los problemas.
+- **Objetivo:** usar NearDear de verdad y recoger los problemas.
 - **Alcance:** uso diario, un formulario simple de incidencias (GitHub Issues con plantilla), revisión semanal de Sentry y de las métricas del script de la Fase 0 adaptado a `location_history`.
 - **Criterios de aceptación:** 👤 los criterios de batería y fiabilidad de la Fase 0 se mantienen con la app completa; 👤 lista de incidencias priorizada; 👤 decisión de pasar o no al hito de publicación.
 - **Dependencias:** F29.
@@ -1034,7 +1034,7 @@ Se activa cuando la exploración te convenza. El código ya está hecho; son sob
 
 - **Objetivo:** tener las cuentas de tienda listas y el nombre comprobado.
 - **Tareas:**
-  1. Buscar "One360" en **TMview** (EUIPO) y en las tiendas. Si hay conflicto, elegir otro nombre antes de seguir.
+  1. Buscar "NearDear" en **TMview** (EUIPO) y en las tiendas, y registrar el dominio. Si hay conflicto, elegir otro nombre antes de seguir.
   2. **Apple Developer Program** como persona física (99 $/año): Apple ID con doble factor y verificación de identidad. Suele tardar entre 1 y 2 días.
   3. **Google Play Console** como persona física (25 $, pago único): verificación de identidad con documento oficial y verificación de un dispositivo Android. Puede tardar varios días.
   4. Borrador de la **evaluación de impacto (EIPD)**.
@@ -1135,7 +1135,7 @@ Con menos detalle y en orden de prioridad aproximado.
 | D5 | Qué ven los demás de alguien sin datos recientes | (a) la última posición con "hace X"; (b) ocultarla pasado un tiempo | **(a)** en el MVP, con un aviso visual si tiene más de 1 h. |
 | D6 | Frecuencia de envío por defecto | `autoSyncThreshold` 1 (inmediato, más batería) a 10 (menos tiempo real) | **5**, ajustable tras la Fase 0. Más adelante, envío inmediato cuando haya espectadores (requiere push silenciosa). |
 | D7 | Alojamiento de los textos legales | (a) GitHub Pages; (b) web en Astro en Vercel | **(b)** cuando haya dominio: te sirve también como web del producto, y conoces Astro. **(a)** mientras tanto. |
-| D8 | Identificador de la app (`bundleIdentifier` / `applicationId`) | Por ejemplo `es.<tudominio>.one360` | **Decidirlo en F5**: es definitivo y va ligado a la licencia de Transistor. |
+| D8 | Identificador de la app (`bundleIdentifier` / `applicationId`) | Por ejemplo `app.neardear` (si se consigue el dominio) o `es.<tudominio>.neardear` | **Decidirlo en F5**, cuando esté verificado el nombre: es definitivo y va ligado a la licencia de Transistor. |
 | D9 | Licencia del código del repo público | MIT, AGPL, sin licencia ("todos los derechos reservados") | **Sin licencia** si quieres reservarte el uso comercial; **AGPL** si quieres que sea abierto pero que nadie lo explote cerrado. |
 | D10 | Cuenta de demo para los revisores | (a) código OTP fijo para un email concreto activado por configuración; (b) login con contraseña solo para la cuenta de demo | **(a)**: no añade otro método de login. El código fijo vive en un secreto, nunca en el repo. |
 | D12 | Alojamiento de la API al publicar | (a) Vercel Pro (20 $/mes); (b) Cloudflare Workers (gratis, uso comercial permitido, Postgres con Hyperdrive); (c) Supabase Edge Functions | Exploración en **Vercel Hobby**. Decidir en el hito de publicación según el número de usuarios. Para que el cambio sea barato, nada específico de Vercel sale de `apps/api/src/main/` (el trabajo en segundo plano tras la respuesta va detrás de un puerto `BackgroundTasks`). **Tiempo real:** si se elige Cloudflare, **Durable Objects** con WebSockets (un objeto por grupo, con hibernación) sustituiría a Supabase Realtime y eliminaría la excepción al principio nº 1. Solo cambiarían el adaptador `GroupNotifier` de la API y el adaptador de tiempo real de la app. |
