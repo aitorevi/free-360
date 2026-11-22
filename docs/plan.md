@@ -1170,7 +1170,7 @@ Se mantienen los planes gratuitos hasta que los números pidan otra cosa.
 |---|---|
 | Apple Developer Program | 99 $/año (≈ 8 $/mes) |
 | Google Play Console | 25 $ una vez |
-| Licencia Transistor (Android) | Pago único por app, del orden de cientos de dólares, con un año de actualizaciones (**confirmar el precio actual** en su web). Opción: lanzar primero solo en iOS y aplazarla. |
+| Licencia Transistor (Android) | **Starter: 399 $** (una app), visto en shop.transistorsoft.com en noviembre de 2026. Otros niveles: Venture 599 $ (pocas apps), Pro 749 $ (varias apps y soporte prémium). Condiciones de renovación pendientes de confirmar. Opción: lanzar primero solo en iOS y aplazarla. |
 | Supabase | Free: 500 MB dan para ≈ 300–400 usuarios con 30 días de historial. Con ingesta diaria no se pausa. |
 | API | Vercel Hobby mientras sea uso personal; al publicar, ver D12 (Cloudflare Workers gratis o Vercel Pro a 20 $/mes). |
 | Resto (Resend, Sentry, Expo, FCM, OpenFreeMap) | 0 $ en planes gratuitos |
